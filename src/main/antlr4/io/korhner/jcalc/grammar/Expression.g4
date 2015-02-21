@@ -1,23 +1,27 @@
 grammar Expression;
 prog: expr ;
 
-expr: 	expr op=(MUL|DIV) expr			# mulDiv
-	|	expr op=(ADD|SUB) expr			# addSub
-	|	number							# constant
-	|	'(' expr ')'					# parens
+expr: 	expr mulPrecedence expr		# mulPrec
+	|	expr addPrecedence expr		# addPrec
+	|	number						# constant
+	|	'(' expr ')'				# parens
 	;
 
 
-number: SUB? (decimal | integer) ;
+
+number: MINUS? (decimal | integer) ;
 integer: DIGITS ;
 decimal: DIGITS? '.' DIGITS ;
 
+mulPrecedence: op=(MUL | DIV | MODUO) ;
+addPrecedence: op=(PLUS | MINUS) ;
 
 DIGITS: [0-9]+ ;
-MUL : '*';
-DIV : '/';
-ADD : '+';
-SUB : '-';
+MUL: '*' ;
+DIV: '/' ;
+PLUS: '+' ;
+MINUS: '-' ;
+MODUO: '%' ; 
 
 
 

@@ -1,4 +1,4 @@
-package io.korhner.jcalc.test;
+package io.korhner.jcalc.evaluation;
 
 import io.korhner.jcalc.evaluation.ExpressionEvaluator;
 
@@ -104,6 +104,15 @@ public class TestGrammar {
 		String expression = "((2.1+3)+(4+1*2))*3";
 		double result = ExpressionEvaluator.evaluate(expression);
 		double expected = 33.3;
+		
+		Assert.assertEquals(result, expected, allowedError);
+	}
+	
+	@Test
+	public void moduo() {
+		String expression = "1+5%2";
+		double result = ExpressionEvaluator.evaluate(expression);
+		double expected = 2;
 		
 		Assert.assertEquals(result, expected, allowedError);
 	}

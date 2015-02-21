@@ -6,6 +6,13 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>JCalc</name>
 	<description>A Java library for evaluating mathematical expressions</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<antlr4.visitor>true</antlr4.visitor>
+		<antlr4.listener>false</antlr4.listener>
+	</properties>
+	
 	<build>
 		<plugins>
 			<plugin>

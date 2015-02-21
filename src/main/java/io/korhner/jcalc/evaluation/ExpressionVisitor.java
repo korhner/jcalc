@@ -3,22 +3,22 @@ package io.korhner.jcalc.evaluation;
 import io.korhner.jcalc.grammar.ExpressionBaseVisitor;
 import io.korhner.jcalc.grammar.ExpressionParser;
 import io.korhner.jcalc.grammar.ExpressionParser.AddSubContext;
+import io.korhner.jcalc.grammar.ExpressionParser.ConstantContext;
 import io.korhner.jcalc.grammar.ExpressionParser.MulDivContext;
-import io.korhner.jcalc.grammar.ExpressionParser.NumberContext;
 import io.korhner.jcalc.grammar.ExpressionParser.ParensContext;
 
-public class ExpressionVisitor extends ExpressionBaseVisitor<Integer> {
+public class ExpressionVisitor extends ExpressionBaseVisitor<Double> {
 
 	@Override
-	public Integer visitNumber(NumberContext ctx) {
-		return Integer.valueOf(ctx.NUMBER().getText());
+	public Double visitConstant(ConstantContext ctx) {
+		return Double.valueOf(ctx.getText());
 	}
 
 	@Override
-	public Integer visitMulDiv(MulDivContext ctx) {
-		int left = visit(ctx.expr(0));
-		int right = visit(ctx.expr(1));
-		int result = 0;
+	public Double visitMulDiv(MulDivContext ctx) {
+		double left = visit(ctx.expr(0));
+		double right = visit(ctx.expr(1));
+		double result = 0;
 
 		switch (ctx.op.getType()) {
 		case ExpressionParser.MUL:
@@ -33,10 +33,10 @@ public class ExpressionVisitor extends ExpressionBaseVisitor<Integer> {
 	}
 
 	@Override
-	public Integer visitAddSub(AddSubContext ctx) {
-		int left = visit(ctx.expr(0));
-		int right = visit(ctx.expr(1));
-		int result = 0;
+	public Double visitAddSub(AddSubContext ctx) {
+		double left = visit(ctx.expr(0));
+		double right = visit(ctx.expr(1));
+		double result = 0;
 
 		switch (ctx.op.getType()) {
 		case ExpressionParser.ADD:
@@ -51,7 +51,7 @@ public class ExpressionVisitor extends ExpressionBaseVisitor<Integer> {
 	}
 	
 	@Override
-	public Integer visitParens(ParensContext ctx) {
+	public Double visitParens(ParensContext ctx) {
 		return visit(ctx.expr());
 	}
 }

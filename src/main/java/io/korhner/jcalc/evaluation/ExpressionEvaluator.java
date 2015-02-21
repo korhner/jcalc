@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 public class ExpressionEvaluator {
 
-	public static int evaluate(final String expression) {
+	public static double evaluate(final String expression) {
 		ANTLRInputStream input = new ANTLRInputStream(expression);
 		ExpressionLexer lexer = new ExpressionLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);

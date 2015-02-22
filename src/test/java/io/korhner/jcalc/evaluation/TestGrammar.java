@@ -10,165 +10,110 @@ public class TestGrammar {
 	private static final double allowedError = 0.0001;
 
 	@Test
-	public void simpleAddition() {
-		String expression = "2+3";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = 5;
-		
-		Assert.assertEquals(result, expected, allowedError);
+	public void simpleArithmetic() {
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2+3").getNumber(), 5,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("10-2").getNumber(),
+				8, allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("0*3+1").getNumber(), 1,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("1/3").getNumber(), 0.333333,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("-2.5*-2").getNumber(), 5,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("-.5*-.5").getNumber(), 0.25,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("10%2").getNumber(), 0,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("10%3").getNumber(), 1,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2^3").getNumber(), 8,
+				allowedError);
 	}
 	
 	@Test
-	public void simpleSubstraction() {
-		String expression = "2-3";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = -1;
-		
-		Assert.assertEquals(result, expected, allowedError);
+	public void rightAssociativity() {
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2^3^2").getNumber(), 512,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("(2^1)^2").getNumber(), 4,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("1+2^2*3").getNumber(), 13,
+				allowedError);
 	}
 	
 	@Test
-	public void simpleMultiplication() {
-		String expression = "2*3";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = 6;
+	public void numberVariations() {
+		Assert.assertEquals(ExpressionEvaluator.evaluate("1").getNumber(), 1,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("-1").getNumber(), -1,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("+1").getNumber(), 1,
+				allowedError);
 		
-		Assert.assertEquals(result, expected, allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("1.1").getNumber(), 1.1,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate(".1").getNumber(), .1,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("1.").getNumber(), 1.,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("+1.").getNumber(), 1,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("-.8").getNumber(), -0.8,
+				allowedError);
+	}
+
+	@Test
+	public void arithmeticPrecedence() {
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2+3*-2").getNumber(), -4,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("(2+3)*-2").getNumber(), -10,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("((2.1+3)+(4+1*2))*3").getNumber(), 33.3,
+				allowedError);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("1+3%2").getNumber(), 2,
+				allowedError);
+	}
+
+	@Test
+	public void simpleLogical() {
+		Assert.assertEquals(ExpressionEvaluator.evaluate("!T").getBool(), false);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("!F").getBool(), true);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("!!T").getBool(), true);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("T").getBool(), true);
+		
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2<3.5").getBool(), true);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2<2").getBool(), false);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2<1.1").getBool(), false);
+		
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2<=3.5").getBool(), true);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2<=2").getBool(), true);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2<=1.1").getBool(), false);
+		
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2>3.5").getBool(), false);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2>2").getBool(), false);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2>-5.1").getBool(), true);
+		
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2>=3.5").getBool(), false);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("2>=2").getBool(), true);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("-2>=5.1").getBool(), false);
+		
+		Assert.assertEquals(ExpressionEvaluator.evaluate("T&&T").getBool(), true);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("F&&T").getBool(), false);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("F&&F").getBool(), false);
+		
+		Assert.assertEquals(ExpressionEvaluator.evaluate("T||F").getBool(), true);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("F||F").getBool(), false);
+		
+		Assert.assertEquals(ExpressionEvaluator.evaluate("T==T").getBool(), true);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("T==F").getBool(), false);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("!T!=F").getBool(), false);
 	}
 	
 	@Test
-	public void simpleDivision() {
-		String expression = "2/3";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = 0.666666;
-		
-		Assert.assertEquals(result, expected, allowedError);
+	public void logicalPrecedence() {
+		Assert.assertEquals(ExpressionEvaluator.evaluate("!(T && F) == (!T || !F)").getBool(), true);
+		Assert.assertEquals(ExpressionEvaluator.evaluate("!(1<2 || 2>1) == (1>=2 && 2<=1)").getBool(), true);
 	}
 	
-	@Test
-	public void signedInteger() {
-		String expression = "-2-3";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = -5;
-		
-		Assert.assertEquals(result, expected, allowedError);
-	}
-	
-	@Test
-	public void signedDouble() {
-		String expression = "-2.5*-2";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = 5;
-		
-		Assert.assertEquals(result, expected, allowedError);
-	}
-	
-	@Test
-	public void shortDouble() {
-		String expression = "-.5*.5";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = -0.25;
-		
-		Assert.assertEquals(result, expected, allowedError);
-	}
-	
-	@Test
-	public void multipleOperations() {
-		String expression = "2-3+245";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = 244;
-		
-		Assert.assertEquals(result, expected, allowedError);
-	}
-	
-	@Test
-	public void multiplicationPrecedence() {
-		String expression = "2+3*-2";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = -4;
-		
-		Assert.assertEquals(result, expected, allowedError);
-	}
-	
-	@Test
-	public void parensPrecedence() {
-		String expression = "(2+3)*-2";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = -10;
-		
-		Assert.assertEquals(result, expected, allowedError);
-	}
-	
-	@Test
-	public void nestedParens() {
-		String expression = "((2.1+3)+(4+1*2))*3";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = 33.3;
-		
-		Assert.assertEquals(result, expected, allowedError);
-	}
-	
-	@Test
-	public void moduo() {
-		String expression = "1+5%2";
-		double result = ExpressionEvaluator.evaluate(expression).getNumber();
-		double expected = 2;
-		
-		Assert.assertEquals(result, expected, allowedError);
-	}
-	
-	@Test
-	public void negationTrue() {
-		String expression = "!T";
-		boolean result = ExpressionEvaluator.evaluate(expression).getBool();
-		boolean expected = false;
-		
-		Assert.assertEquals(result, expected);
-	}
-	
-	@Test
-	public void negationFalse() {
-		String expression = "!F";
-		boolean result = ExpressionEvaluator.evaluate(expression).getBool();
-		boolean expected = true;
-		
-		Assert.assertEquals(result, expected);
-	}
-	
-	@Test
-	public void doubleNegation() {
-		String expression = "!!F";
-		boolean result = ExpressionEvaluator.evaluate(expression).getBool();
-		boolean expected = false;
-		
-		Assert.assertEquals(result, expected);
-	}
-	
-	@Test
-	public void lessThanTrue() {
-		String expression = "2<3.5";
-		boolean result = ExpressionEvaluator.evaluate(expression).getBool();
-		boolean expected = true;
-		
-		Assert.assertEquals(result, expected);
-	}
-	
-	@Test
-	public void lessThanEquals() {
-		String expression = "2<2";
-		boolean result = ExpressionEvaluator.evaluate(expression).getBool();
-		boolean expected = false;
-		
-		Assert.assertEquals(result, expected);
-	}
-	
-	@Test
-	public void lessThanGreater() {
-		String expression = "2<1";
-		boolean result = ExpressionEvaluator.evaluate(expression).getBool();
-		boolean expected = false;
-		
-		Assert.assertEquals(result, expected);
-	}
 
 }

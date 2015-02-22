@@ -7,6 +7,7 @@ import io.korhner.jcalc.grammar.ExpressionParser.AndOperationContext;
 import io.korhner.jcalc.grammar.ExpressionParser.BoolEqualityOperationContext;
 import io.korhner.jcalc.grammar.ExpressionParser.BoolParenthesesContext;
 import io.korhner.jcalc.grammar.ExpressionParser.BoolValueContext;
+import io.korhner.jcalc.grammar.ExpressionParser.ExponentialOperationContext;
 import io.korhner.jcalc.grammar.ExpressionParser.MultiplicationOperationContext;
 import io.korhner.jcalc.grammar.ExpressionParser.NumberEqualityOperationContext;
 import io.korhner.jcalc.grammar.ExpressionParser.NumberParenthesesContext;
@@ -161,5 +162,13 @@ public class ExpressionVisitor extends ExpressionBaseVisitor<Value> {
 	@Override
 	public Value visitBoolParentheses(BoolParenthesesContext ctx) {
 		return visit(ctx.boolExpr());
+	}
+	
+	@Override
+	public Value visitExponentialOperation(ExponentialOperationContext ctx) {
+		double left = visit(ctx.numExpr(0)).getNumber();
+		double right = visit(ctx.numExpr(1)).getNumber();
+		double result = Math.pow(left, right);
+		return new Value(result);
 	}
 }

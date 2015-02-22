@@ -1,7 +1,8 @@
 grammar Expression;
 prog: numExpr | boolExpr ;
 
-numExpr: 	numExpr mulPrecedence numExpr		# multiplicationOperation
+numExpr:	<assoc=right> numExpr EXP numExpr	# exponentialOperation
+		| 	numExpr mulPrecedence numExpr		# multiplicationOperation
 		|	numExpr addPrecedence numExpr		# additionOperation
 		|	numConstant							# numberValue
 		|	'(' numExpr ')'						# numberParentheses
@@ -27,17 +28,20 @@ eqPrecedence: op=(EQ | NOTEQ) ;
 andPrecedence: AND ;
 orPrecedence: OR ;
 
-numConstant: MINUS? (decimal | integer) ;
-integer: DIGITS ;
-decimal: DIGITS? '.' DIGITS ;
+numConstant: (PLUS|MINUS)? (decimal | integer) ;
+integer: DIGIT+ ;
+decimal: 	DIGIT+ '.' DIGIT*
+		| 	'.' DIGIT+
+		;		
 
 boolConstant: op=(TRUE | FALSE) ;
 
-DIGITS: [0-9]+ ;
+DIGIT: [0-9] ;
 
 TRUE: 'T' ;
 FALSE: 'F' ;
 
+EXP: '^' ;
 MUL: '*' ;
 DIV: '/' ;
 
@@ -52,7 +56,7 @@ LTEQ : '<=' ;
 GT : '>' ;
 GTEQ : '>=' ;
 
-EQ: '=' ;
+EQ: '==' ;
 NOTEQ: '!=' ;
 
 AND: '&&' ;
